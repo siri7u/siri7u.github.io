@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
+    <script src="https://code.iconify.design/1/1.0.4/iconify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.9/ace.js"></script>
+    <title>SQL Code autocorrection</title>
+</head>
+
+<body>
+    <style>
+        .center {
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .box {
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            width: 97%;
+            padding: 0px;
+        }
+        
+        input {
+            outline: none;
+        }
+        
+        textarea {
+            border: none;
+            overflow: auto;
+            outline: none;
+            -webkit-box-shadow: none;
+            -moz-box-shadow: none;
+            box-shadow: none;
+        }
+        
+        .original {
+            position: absolute;
+            width: 98%;
+            margin: 0 auto;
+            padding: 1em;
+            background: #fff;
+            height: 70%;
+            margin: 2px;
+            color: #fff;
+            overflow: auto;
+        }
+        
+        #dummy {
+            color: black;
+        }
+        
+        #board {
+            z-index: 11;
+            background: transparent;
+            color: transparent;
+            caret-color: black;
+        }
+        
+        .original span.highlighted {
+            color: red;
+        }
+        
+        [contenteditable]:focus {
+            outline: 0px solid transparent;
+        }
+        
+        .bouton-question {
+            text-align: center;
+            width: 2em;
+        }
+        
+        .app_editor {
+            height: 300px;
+        }
+        
+        .app_editor_wrapper {
+            background-color: #cccccc;
+            border-bottom: 1px solid #222222;
+        }
+        
+        .app_editor_dragbar {
+            background-color: #222222;
+            width: 100%;
+            height: 2px;
+            cursor: row-resize;
+            opacity: 1;
+        }
+    </style>
+    <br><br>
+
+    <div class="container" style="background-color: #e5e5e5;">
+
+        <br>
+        <!-- Boutons selectionner questions-->
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <div class="d-flex flex-wrap question-button-holder">
+
+            </div>
+        </div>
+        <br> <br>
+
+
+        <h4 class="question">Selectionner une question</h4>
+
+        <p>La table est constituée de la table pil Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia laudantium iure nihil ipsum ut hic a quisquam, perspiciatis nam beatae illo cupiditate? Veritatis ullam necessitatibus debitis molestiae quod.
+            Expedita, veritatis.</p>
+
+        <br>
+
+        <!-- Importation des questions-->
+        <script src="questions.js"></script>
+
+        <!-- Affichage des boutons questions-->
+        <script>
+            console.log(questions);
+
+            for (var i = 0; i < Object.keys(questions).length; i++) {
+                $('.question-button-holder').append(`
+                    <a class="page-link" href="#" onclick="btnqtn(` + (i) + `)">` + (i + 1) + `</a>
+                `);
+            }
+
+            function btnqtn(i) {
+                $('.question').empty();
+                $('.question').append(questions[i].description);
+                regles = questions[i].regles;
+
+            }
+        </script>
+
+        <br>
+
+        <div class="row">
+
+            <!-- COL 1-->
+            <div class="col">
+
+                <!--Editeur ACE-->
+                <div id="editor1_wrapper" class="app_editor_wrapper">
+                    <div id="editor1" class="app_editor">echo "Hello";</div>
+                </div>
+
+                <script>
+                    var aceEditorInstance = ace.edit("editor1");
+
+                    aceEditorInstance.setTheme("ace/theme/monokai");
+                    aceEditorInstance.setShowPrintMargin(false);
+                    // inline must be true to syntax highlight PHP without opening <?php tag
+                    aceEditorInstance.getSession().setMode({
+                        path: "ace/mode/mysql",
+                        inline: true
+                    });
+                    aceEditorInstance.setOptions({
+                        fontSize: "1em"
+                    });
+                </script><br>
+
+                <!--Bouton soumettre-->
+                <button type="button" class="btn btn-primary" id="soumettre">
+                    <span class="iconify" data-icon="bx:bx-code-alt" data-inline="false" style="vertical-align: middle;"></span> Soumettre
+                </button>
+
+            </div>
+            <!---->
+
+
+            <!-- COL2-->
+            <div class="list-group" style="width: 40%; padding-right:15px">
+                <a href="#" class="list-group-item list-group-item-action active">Correction</a>
+                <div class="correction-holder"></div>
+            </div>
+            <!---->
+
+        </div> <br>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+
+            $("#soumettre").click(function() {
+
+                // var text = $('#board').text();
+                var text = aceEditorInstance.getValue();
+
+                console.log(text);
+                //console.log(regles);
+
+                $(".correction-holder").empty();
+                //boucle sur toutes les rêgeles
+                for (i = 0; i < Object.keys(regles).length; i++) {
+
+                    console.log(text.match(regles[i].regExps));
+
+                    if (text.match(regles[i].regExps)) {
+
+                        $(".correction-holder").append(`
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <span class="iconify" data-icon="emojione:check-mark-button" data-inline="false"></span>` + " " + regles[i].feedbackVrai + `
+                            </a>
+                        `);
+
+                    } else {
+
+                        $(".correction-holder").append(`
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <span class="iconify" data-icon="emojione-v1:cross-mark" data-inline="false"></span>  ` + " " + regles[i].feedbackFaux + `       
+                            </a>
+                        `);
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

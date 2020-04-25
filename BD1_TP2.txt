@@ -1,0 +1,17 @@
+Donner toutes les informations sur les pilotes
+	SELECT *
+	FROM pilote
+
+Donner le nom et l’adresse des pilotes
+	SELECT nompil, adresse1, adresse2 
+	FROM pilote
+
+Liste des avions de nom A310, A320 et A330 :
+	SELECT * 
+	FROM avion 
+	WHERE nomav = 'A310' or nomav = 'A320' or nomav = 'A330' 
+
+Noms des pilotes qui gagnent entre 2300 Euros et 3500 Euros inclus (donner 2 solutions).
+	SELECT nompil 
+	FROM pilote 
+	WHERE 2300<salaire<3500 

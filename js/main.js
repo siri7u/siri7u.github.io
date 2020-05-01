@@ -94,6 +94,8 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+var firstFrame = true;
+
 function animate() {
     TWEEN.update();
     requestAnimationFrame(animate);
@@ -108,8 +110,15 @@ function animate() {
     skelet.rotation.y += 0.0020;
 
     renderer.clear();
-    renderer.render(scene, camera)
+    renderer.render(scene, camera);
+
+    if (firstFrame) {
+        console.log("First frame");
+        firstFrame = false;
+        animationStart()
+    }
 };
+
 
 function animationStart() {
 
@@ -130,7 +139,12 @@ function bye() {
         y: 2500,
 
         z: camera.position.z - 200
-    }, 1200).easing(TWEEN.Easing.Back.In).start();
+    }, 1200).easing(TWEEN.Easing.Exponential.In).start();
 }
+
+
+
+
+
 
 //TWEEN.Easing.Elastic.Out

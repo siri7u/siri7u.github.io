@@ -1,17 +1,10 @@
-html {
+body {
     width: 100%;
     height: 100%;
-    /* Old browsers */
-    background: #11e8bb;
-    /* Old browsers */
-    background: -moz-linear-gradient(top, #11e8bb 0%, #1e72a3 100%);
-    /* FF3.6-15 */
-    background: -webkit-linear-gradient(top, #11e8bb 0%, #1e72a3 100%);
-    /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to bottom, #11e8bb 0%, #1e72a3 100%);
-    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#11e8bb', endColorstr='#8200c9', GradientType=0);
-    /* IE6-9 */
+    background: #11e8bb !important;
+    background: -moz-linear-gradient(top, #11e8bb 0%, #1e72a3 100%) !important;
+    background: -webkit-linear-gradient(top, #11e8bb 0%, #1e72a3 100%) !important;
+    background: linear-gradient(to bottom, #11e8bb 0%, #1e72a3 100%) !important;
 }
 
 .info {
@@ -60,12 +53,15 @@ h3 {
 }
 
 .flex-container {
-    display: inline-flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    align-content: stretch;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
     align-items: center;
+    justify-content: center;
+    z-index: 10;
+    /*width: 100%;*/
+    /*height: 100%;*/
 }
 
 .flex-item {
